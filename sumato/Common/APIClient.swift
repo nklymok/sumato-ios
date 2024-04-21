@@ -51,6 +51,46 @@ class APIClient {
             }
         }.resume()
     }
+    
+    func fetchAnswerResult(forUserId userId: Int, reviewId: Int, userAnswer: String, completion: @escaping (Result<AnswerResultResponse, Error>) -> Void) {
+        guard let url = URL(string: "http://localhost:8080/api/kanji/\(userId)/answer") else {
+            completion(.failure(NetworkError.invalidURL))
+            return
+        }
+        
+        // Prepare the request body
+        let requestBody: [String: Any] = [
+            "reviewId": reviewId,
+            "answer": userAnswer
+        ]
+        
+        do {
+            let jsonData = try JSONSerialization.data(withJSONObject: requestBody, options: [])
+            
+            var request = URLRequest(url: url)
+            request.httpMethod = "POST"
+            request.setValue("application/json", forHTTPHeaderField: "Content-Type")
+            request.httpBody = jsonData
+            
+            URLSession.shared.dataTask(with: request) { data, response, error in
+                guard let data = data, error == nil else {
+                    completion(.failure(error ?? NetworkError.unknownError))
+                    return
+                }
+                
+                do {
+                    let result = try JSONDecoder().decode(AnswerResultResponse.self, from: data)
+                    completion(.success(result))
+                } catch {
+                    completion(.failure(error))
+                }
+            }.resume()
+        } catch {
+            completion(.failure(error))
+        }
+    }
+
+    
 }
 
 enum NetworkError: Error {

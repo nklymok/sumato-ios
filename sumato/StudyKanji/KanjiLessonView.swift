@@ -26,7 +26,9 @@ struct KanjiLessonView: View {
                 ProgressView()
                 Spacer()
             } else if let currentKanji = lesson.kanjis[safe: lesson.currentKanjiIndex] {
+                Spacer()
                 KanjiDetailView(kanji: currentKanji)
+                Spacer()
                 
                 HStack(spacing: 60) {
                     Button(action: {
@@ -42,6 +44,9 @@ struct KanjiLessonView: View {
                     }
                     .fontWeight(.semibold)
                     Button("Got it") {
+                        if (lesson.currentKanjiIndex == lesson.kanjis.count - 1) {
+                            appState.path.append(StudyKanjiNavigation(viewName: "kanjiPractice", kanjis: []))
+                        }
                         lesson.goToNext()
                     }
                     .padding()
@@ -58,7 +63,6 @@ struct KanjiLessonView: View {
         .onAppear {
             lesson.fetchData(forUserId: appState.userId)
         }
-        .navigate(to: KanjiFinishView(kanjis: lesson.kanjis), when: $lesson.kanjiFinished)
     }
 }
 

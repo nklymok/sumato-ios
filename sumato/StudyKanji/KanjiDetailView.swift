@@ -13,7 +13,6 @@ struct KanjiDetailView: View {
     var body: some View {
         VStack {
             VStack {
-                Spacer()
                 Text(kanji.value)
                     .font(.system(size: 72))
                     .fontWeight(.bold)
@@ -48,13 +47,12 @@ struct KanjiDetailView: View {
                         .font(.title)
                         .fontWeight(.semibold)
                 }
-                Spacer()
             }
         }
     }
 }
 
 #Preview {
-    let kanji = Kanji(value: "一", onyomi: "イチ・イツ", kunyomi: "ひと-・ひと.つ", meaning: "one", koohiiStory: "One down, 2041 to go. ;)", grade: "1", frequency: 2)
+    let kanji = Kanji(reviewId: 1, value: "一", onyomi: "イチ・イツ", kunyomi: "ひと-・ひと.つ", meaning: "one", koohiiStory: "One down, 2041 to go. ;)", grade: "1", frequency: 2, isGuessed: false)
     return KanjiDetailView(kanji: kanji)
 }

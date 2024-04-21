@@ -10,4 +10,5 @@ import SwiftUI
 class AppState: ObservableObject {
     @Published var showPoints = true
     @Published var userId: Int?
+    @Published var path: NavigationPath = NavigationPath()
 }

@@ -8,21 +8,33 @@
 import SwiftUI
 
 class LessonViewModel: ObservableObject {
-    @Published var kanjiFinished: Bool = false
     @Published var kanjis: [Kanji] = []
+    @Published var userGuess: String = ""
     @Published var currentKanjiIndex: Int = 0
+    @Published var correctGuess: Bool? = nil
+    @Published var isPractice = false
+    @Published var allKanjiGuessed = false
+    @EnvironmentObject var appState: AppState
     
     func goBack() {
-        guard currentKanjiIndex > 0 else { return }
+        guard currentKanjiIndex > 0 && !isPractice else { return }
         currentKanjiIndex -= 1
     }
     
     func goToNext() {
-        guard currentKanjiIndex < kanjis.count - 1 else {
-            kanjiFinished = true
-            return
+        if !isPractice {
+            guard currentKanjiIndex < kanjis.count - 1 else {
+                return
+            }
+            currentKanjiIndex += 1
+        } else {
+            correctGuess = nil
+            if let index = kanjis.firstIndex(where: { $0.isGuessed == false }) {
+                currentKanjiIndex = index
+            } else {
+                allKanjiGuessed = true
+            }
         }
-        currentKanjiIndex += 1
     }
     
     func fetchData(forUserId userId: Int?) {
@@ -41,5 +53,30 @@ class LessonViewModel: ObservableObject {
                 print("Error fetching lesson: \(error)")
             }
         }
+    }
+    
+    func checkAnswer(forUserId userId: Int?) {
+        guard let userId = userId else {
+            print("User ID is nil")
+            return
+        }
+        
+        APIClient.shared.fetchAnswerResult(forUserId: userId, reviewId: kanjis[currentKanjiIndex].reviewId, userAnswer: userGuess) { result in
+            switch result {
+            case .success(let response):
+                DispatchQueue.main.async {
+                    self.userGuess = ""
+                    if (response.isCorrect) {
+                        self.kanjis[self.currentKanjiIndex].isGuessed = true
+                        self.goToNext()
+                    } else {
+                        self.correctGuess = false
+                    }
+                }
+            case .failure(let error):
+                print("Error fetching lesson: \(error)")
+            }
+        }
+
     }
 }

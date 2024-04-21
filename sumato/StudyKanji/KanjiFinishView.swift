@@ -8,6 +8,8 @@
 import SwiftUI
 
 struct KanjiFinishView: View {
+    @Environment(\.presentationMode) var presentationMode: Binding<PresentationMode>
+    @EnvironmentObject var appState: AppState
     var kanjis: [Kanji]
     
     var body: some View {
@@ -38,7 +40,7 @@ struct KanjiFinishView: View {
             .padding(.bottom, 25)
             
             Button("Finish lesson") {
-                
+                appState.path = NavigationPath()
             }
             .padding()
             .padding(.trailing, 25)
@@ -52,9 +54,9 @@ struct KanjiFinishView: View {
 }
 
 #Preview {
-    let kanji1 = Kanji(value: "一", onyomi: "イチ・イツ", kunyomi: "ひと-・ひと.つ", meaning: "one", koohiiStory: "One down, 2041 to go. ;)", grade: "1", frequency: 2)
-    let kanji2 = Kanji(value: "一", onyomi: "イチ・イツ", kunyomi: "ひと-・ひと.つ", meaning: "one", koohiiStory: "One down, 2041 to go. ;)", grade: "1", frequency: 2)
-    let kanji3 = Kanji(value: "一", onyomi: "イチ・イツ", kunyomi: "ひと-・ひと.つ", meaning: "one", koohiiStory: "One down, 2041 to go. ;)", grade: "1", frequency: 2)
-    let kanji4 = Kanji(value: "一", onyomi: "イチ・イツ", kunyomi: "ひと-・ひと.つ", meaning: "one", koohiiStory: "One down, 2041 to go. ;)", grade: "1", frequency: 2)
+    let kanji1 = Kanji(reviewId: 1, value: "一", onyomi: "イチ・イツ", kunyomi: "ひと-・ひと.つ", meaning: "one", koohiiStory: "One down, 2041 to go. ;)", grade: "1", frequency: 2, isGuessed: false)
+    let kanji2 = Kanji(reviewId: 1, value: "一", onyomi: "イチ・イツ", kunyomi: "ひと-・ひと.つ", meaning: "one", koohiiStory: "One down, 2041 to go. ;)", grade: "1", frequency: 2, isGuessed: false)
+    let kanji3 = Kanji(reviewId: 1, value: "一", onyomi: "イチ・イツ", kunyomi: "ひと-・ひと.つ", meaning: "one", koohiiStory: "One down, 2041 to go. ;)", grade: "1", frequency: 2, isGuessed: false)
+    let kanji4 = Kanji(reviewId: 1, value: "一", onyomi: "イチ・イツ", kunyomi: "ひと-・ひと.つ", meaning: "one", koohiiStory: "One down, 2041 to go. ;)", grade: "1", frequency: 2, isGuessed: false)
     return KanjiFinishView(kanjis: [kanji1, kanji2, kanji3, kanji4, kanji4, kanji4])
 }

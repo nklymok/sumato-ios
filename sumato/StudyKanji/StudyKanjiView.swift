@@ -8,10 +8,11 @@
 import SwiftUI
 
 struct StudyKanjiView: View {
-    @ObservedObject var kanjiStats: StatsViewModel
+    @EnvironmentObject var appState: AppState
+    @StateObject private var kanjiStats = StatsViewModel()
     
     var body: some View {
-        NavigationStack {
+        NavigationStack(path: $appState.path) {
             VStack {
                 HStack {
                     Text("My Kanji")
@@ -28,7 +29,7 @@ struct StudyKanjiView: View {
                         subIconText: "Review",
                         outerTextColor: .green,
                         innerTextColor: .black,
-                        destination: KanjiReviewView()
+                        destination: "kanjiReview"
                     )
                     KanjiButton(
                         howManyLeft: kanjiStats.kanjiLeftToStudy,
@@ -36,13 +37,35 @@ struct StudyKanjiView: View {
                         subIconText: "Study",
                         outerTextColor: .blue,
                         innerTextColor: .blue,
-                        destination: KanjiLessonView()
+                        destination: "kanjiLesson"
                     )
                     
                 }
                 Spacer()
             }
+            .onAppear {
+                kanjiStats.fetchData(forUserId: appState.userId)
+            }
             .padding()
+            .navigationDestination(for: StudyKanjiNavigation.self) { selection in
+                if (selection.viewName == "kanjiReview") {
+                    KanjiReviewView()
+                        .navigationBarBackButtonHidden(true)
+                        .toolbar(.hidden, for: .tabBar)
+                } else if (selection.viewName == "kanjiLesson") {
+                    KanjiLessonView()
+                        .navigationBarBackButtonHidden(true)
+                        .toolbar(.hidden, for: .tabBar)
+                } else if (selection.viewName == "kanjiFinish") {
+                    KanjiFinishView(kanjis: selection.kanjis)
+                        .navigationBarBackButtonHidden(true)
+                        .toolbar(.hidden, for: .tabBar)
+                } else if (selection.viewName == "kanjiPractice") {
+                    KanjiPracticeView()
+                        .navigationBarBackButtonHidden(true)
+                        .toolbar(.hidden, for: .tabBar)
+                }
+            }
         }
     }
 }
@@ -52,36 +75,41 @@ struct StudyKanjiView: View {
     mockStats.kanjiLearned = 5
     mockStats.kanjiLeftToReview = 3
     mockStats.kanjiLeftToStudy = 2
-    return StudyKanjiView(kanjiStats: mockStats)
+    let appState = AppState()
+    appState.path = NavigationPath()
+    appState.showPoints = true
+    appState.userId = 1
+    return StudyKanjiView()
+        .environmentObject(appState)
 }
 
-struct KanjiButton<Destination>: View where Destination: View {
+struct KanjiButton: View {
     let howManyLeft: Int
     let iconText: String
     let subIconText: String
     let outerTextColor: Color
     let innerTextColor: Color
-    let destination: Destination
+    let destination: String
+    @EnvironmentObject var appState: AppState
     
     var body: some View {
         let disabled = howManyLeft == 0
         VStack {
-            NavigationLink(destination: destination
-                .toolbar(.hidden, for: .tabBar)
-                .navigationBarBackButtonHidden(true)) {
-                    VStack {
-                        Text(iconText)
-                            .font(.system(size: 45))
-                            .frame(width: 100, height: 85)
-                        Text(subIconText)
-                        
-                    }.padding(15)
-                        .fontWeight(.semibold)
-                        .foregroundColor(innerTextColor)
-                }
-                .buttonStyle(.bordered)
-                .disabled(disabled)
-                .opacity(disabled ? 0.5 : 1.0)
+            NavigationLink(value: StudyKanjiNavigation(viewName: destination, kanjis: []))
+            {
+                VStack {
+                    Text(iconText)
+                        .font(.system(size: 45))
+                        .frame(width: 100, height: 85)
+                    Text(subIconText)
+                    
+                }.padding(15)
+                    .fontWeight(.semibold)
+                    .foregroundColor(innerTextColor)
+            }
+            .buttonStyle(.bordered)
+            .disabled(disabled)
+            .opacity(disabled ? 0.5 : 1.0)
             Text("\(howManyLeft) left")
                 .foregroundColor(outerTextColor)
                 .fontWeight(.semibold)

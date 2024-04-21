@@ -7,7 +7,8 @@
 
 import Foundation
 
-struct Kanji: Decodable {
+struct Kanji: Decodable, Hashable {
+    let reviewId: Int
     let value: String
     let onyomi: String
     let kunyomi: String
@@ -15,4 +16,5 @@ struct Kanji: Decodable {
     let koohiiStory: String
     let grade: String
     let frequency: Int
+    var isGuessed: Bool
 }

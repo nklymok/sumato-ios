@@ -12,7 +12,6 @@ import SwiftUI
 struct MainView: View {
     @State var user: User?
     @State private var showDango = true
-    @StateObject private var stats = StatsViewModel()
     @StateObject var appState = AppState()
     
     var body: some View {
@@ -24,7 +23,7 @@ struct MainView: View {
                 HeaderView(showDango: $showDango)
                 Spacer()
                 TabView {
-                    StudyKanjiView(kanjiStats: stats)
+                    StudyKanjiView()
                         .tabItem {
                             Label("Kanji", systemImage: "1.circle")
                         }
@@ -43,7 +42,6 @@ struct MainView: View {
                 
             }.onAppear {
                 appState.userId = user?.appUserId
-                stats.fetchData(forUserId: user?.appUserId)
             }
             .environmentObject(appState)
         }
@@ -51,8 +49,5 @@ struct MainView: View {
 }
 
 #Preview {
-    let mockAppState = AppState()
-    mockAppState.showPoints = true
-    mockAppState.userId = 1
     return MainView(user: User(id: "1", appUserId: 1, nickname: "name", name: "name", picture: "pic", updatedAt: "updAt"))
 }
