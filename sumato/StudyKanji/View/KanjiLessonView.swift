@@ -45,7 +45,7 @@ struct KanjiLessonView: View {
                     .fontWeight(.semibold)
                     Button("Got it") {
                         if (lesson.currentKanjiIndex == lesson.kanjis.count - 1) {
-                            appState.path.append(StudyKanjiNavigation(viewName: "kanjiPractice", kanjis: []))
+                            appState.path.append(StudyKanjiNavigation(viewName: "kanjiStudy", kanjis: []))
                         }
                         lesson.goToNext()
                     }
@@ -61,7 +61,9 @@ struct KanjiLessonView: View {
         }
         .padding()
         .onAppear {
-            lesson.fetchData(forUserId: appState.userId)
+            appState.showPoints = false
+            lesson.appState = appState
+            lesson.fetchData(forUserId: appState.userId, isReview: false)
         }
     }
 }
@@ -70,6 +72,8 @@ struct KanjiLessonView: View {
     let appState = AppState()
     appState.userId = 1
     appState.showPoints = false
+    appState.kanjiIndex = 0
+    appState.totalKanji = 0
     return KanjiLessonView()
         .environmentObject(appState)
 }

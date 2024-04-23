@@ -8,6 +8,7 @@
 import SwiftUI
 
 class StatsViewModel: ObservableObject {
+    @Published var dataFetched: Bool = false
     @Published var kanjiLearned: Int = 0
     @Published var kanjiLeftToReview: Int = 0
     @Published var kanjiLeftToStudy: Int = 0
@@ -25,6 +26,7 @@ class StatsViewModel: ObservableObject {
                     self.kanjiLearned = stats.kanjiLearned
                     self.kanjiLeftToReview = stats.kanjiLeftToReview
                     self.kanjiLeftToStudy = stats.kanjiLeftToStudy
+                    self.dataFetched = true
                 }
             case .failure(let error):
                 print("Error fetching stats: \(error)")

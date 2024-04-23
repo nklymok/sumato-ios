@@ -20,7 +20,8 @@ struct MainView: View {
         } else {
             
             VStack {
-                HeaderView(showDango: $showDango)
+                HeaderView()
+                    .environmentObject(appState)
                 Spacer()
                 TabView {
                     StudyKanjiView()

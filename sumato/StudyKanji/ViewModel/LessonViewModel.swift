@@ -14,11 +14,11 @@ class LessonViewModel: ObservableObject {
     @Published var correctGuess: Bool? = nil
     @Published var isPractice = false
     @Published var allKanjiGuessed = false
-    @EnvironmentObject var appState: AppState
+    var appState: AppState?
     
     func goBack() {
         guard currentKanjiIndex > 0 && !isPractice else { return }
-        currentKanjiIndex -= 1
+        updateKanjiIndex(newIndex: currentKanjiIndex - 1)
     }
     
     func goToNext() {
@@ -26,28 +26,36 @@ class LessonViewModel: ObservableObject {
             guard currentKanjiIndex < kanjis.count - 1 else {
                 return
             }
-            currentKanjiIndex += 1
+            updateKanjiIndex(newIndex: currentKanjiIndex + 1)
         } else {
             correctGuess = nil
             if let index = kanjis.firstIndex(where: { $0.isGuessed == false }) {
                 currentKanjiIndex = index
             } else {
                 allKanjiGuessed = true
+                self.appState?.showPoints = true
             }
         }
     }
     
-    func fetchData(forUserId userId: Int?) {
+    private func updateKanjiIndex(newIndex: Int) {
+        self.appState?.showPoints = false
+        self.appState?.kanjiIndex = newIndex
+        self.currentKanjiIndex = newIndex
+    }
+    
+    func fetchData(forUserId userId: Int?, isReview: Bool) {
         guard let userId = userId else {
             print("User ID is nil")
             return
         }
         
-        APIClient.shared.fetchStudyKanjis(forUserId: userId) { result in
+        APIClient.shared.fetchKanjis(forUserId: userId, isReview: isReview) { result in
             switch result {
             case .success(let lesson):
                 DispatchQueue.main.async {
                     self.kanjis = lesson.kanjis
+                    self.appState?.totalKanji = lesson.kanjis.count
                 }
             case .failure(let error):
                 print("Error fetching lesson: \(error)")
@@ -77,6 +85,8 @@ class LessonViewModel: ObservableObject {
                 print("Error fetching lesson: \(error)")
             }
         }
-
+        
     }
 }
+
+    

@@ -8,7 +8,7 @@
 import SwiftUI
 
 struct HeaderView: View {
-    @Binding var showDango: Bool
+    @EnvironmentObject var state: AppState
     let logoColor: Color = .logoMain
     
     var body: some View {
@@ -17,14 +17,27 @@ struct HeaderView: View {
             Text("SUMĀTO").fontWeight(.heavy).font(.system(size: 25))
             Text("(スマト)")
             Spacer()
-            if showDango {
+            if state.showPoints {
                 Image("DangoIcon")
                 Text("250").padding(.trailing, 10)
+            } else {
+                Text("学")
+                    .foregroundColor(.blue)
+                    .fontWeight(.bold)
+                    .padding(.trailing, -5)
+                Text("\(state.kanjiIndex ?? 0)/\(state.totalKanji ?? 0)")
+                    .padding(.trailing, 10)
             }
         }.frame(width: .infinity)
     }
 }
 
 #Preview {
-    HeaderView(showDango: .constant(true))
+    let appState = AppState()
+    appState.userId = 1
+    appState.showPoints = false
+    appState.kanjiIndex = 5
+    appState.totalKanji = 5
+    return HeaderView()
+        .environmentObject(appState)
 }

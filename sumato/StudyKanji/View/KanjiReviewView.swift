@@ -1,5 +1,5 @@
 //
-//  KanjiPracticeView.swift
+//  KanjiReviewView.swift
 //  sumato
 //
 //  Created by Nazarii Klymok on 21.04.2024.
@@ -7,7 +7,7 @@
 
 import SwiftUI
 
-struct KanjiPracticeView: View {
+struct KanjiReviewView: View {
     @Environment(\.presentationMode) var presentationMode: Binding<PresentationMode>
     @StateObject private var lesson: LessonViewModel = LessonViewModel()
     @EnvironmentObject var appState: AppState
@@ -78,6 +78,6 @@ struct KanjiPracticeView: View {
     let appState = AppState()
     appState.userId = 1
     appState.showPoints = false
-    return KanjiPracticeView()
+    return KanjiReviewView()
         .environmentObject(appState)
 }

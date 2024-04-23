@@ -40,6 +40,7 @@ struct KanjiFinishView: View {
             .padding(.bottom, 25)
             
             Button("Finish lesson") {
+                appState.showPoints = true
                 appState.path = NavigationPath()
             }
             .padding()

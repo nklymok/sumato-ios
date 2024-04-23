@@ -31,8 +31,9 @@ class APIClient {
         }.resume()
     }
     
-    func fetchStudyKanjis(forUserId userId: Int, completion: @escaping (Result<LessonResponse, Error>) -> Void) {
-        guard let url = URL(string: "http://localhost:8080/api/kanji/\(userId)/study") else {
+    func fetchKanjis(forUserId userId: Int, isReview: Bool, completion: @escaping (Result<LessonResponse, Error>) -> Void) {
+        let urlSuffix = isReview ? "/review" : "/study"
+        guard let url = URL(string: "http://localhost:8080/api/kanji/\(userId)" + urlSuffix) else {
             completion(.failure(NetworkError.invalidURL))
             return
         }

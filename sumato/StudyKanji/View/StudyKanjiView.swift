@@ -22,6 +22,9 @@ struct StudyKanjiView: View {
                 }
                 TotalLearnedStatsView(totalLearned: kanjiStats.kanjiLearned)
                 Spacer()
+                if kanjiStats.dataFetched && kanjiStats.kanjiLeftToReview == 0 && kanjiStats.kanjiLeftToStudy == 0 {
+                    GreatJobView()
+                }
                 HStack(spacing: 30) {
                     KanjiButton(
                         howManyLeft: kanjiStats.kanjiLeftToReview,
@@ -49,7 +52,7 @@ struct StudyKanjiView: View {
             .padding()
             .navigationDestination(for: StudyKanjiNavigation.self) { selection in
                 if (selection.viewName == "kanjiReview") {
-                    KanjiReviewView()
+                    KanjiPracticeView(isReview: true)
                         .navigationBarBackButtonHidden(true)
                         .toolbar(.hidden, for: .tabBar)
                 } else if (selection.viewName == "kanjiLesson") {
@@ -60,8 +63,8 @@ struct StudyKanjiView: View {
                     KanjiFinishView(kanjis: selection.kanjis)
                         .navigationBarBackButtonHidden(true)
                         .toolbar(.hidden, for: .tabBar)
-                } else if (selection.viewName == "kanjiPractice") {
-                    KanjiPracticeView()
+                } else if (selection.viewName == "kanjiStudy") {
+                    KanjiPracticeView(isReview: false)
                         .navigationBarBackButtonHidden(true)
                         .toolbar(.hidden, for: .tabBar)
                 }
@@ -114,6 +117,23 @@ struct KanjiButton: View {
                 .foregroundColor(outerTextColor)
                 .fontWeight(.semibold)
                 .padding(.top, 15)
+        }
+    }
+}
+
+struct GreatJobView: View {
+    var body: some View {
+        VStack {
+            Text("Great job! ✨")
+                .fontWeight(.semibold)
+                .font(.title)
+            Text("Now come back tomorrow 💤")
+                .fontWeight(.medium)
+            Text("(Lessons are updated every 24h)")
+                .font(.footnote)
+                .padding(.top, 10)
+                .padding(.bottom, 20)
+                .fontWeight(.thin)
         }
     }
 }
