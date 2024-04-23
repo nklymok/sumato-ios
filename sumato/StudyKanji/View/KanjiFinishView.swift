@@ -42,6 +42,8 @@ struct KanjiFinishView: View {
             Button("Finish lesson") {
                 appState.showPoints = true
                 appState.path = NavigationPath()
+                appState.kanjiIndex = nil
+                appState.totalKanji = nil
             }
             .padding()
             .padding(.trailing, 25)

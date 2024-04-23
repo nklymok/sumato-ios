@@ -30,7 +30,7 @@ class LessonViewModel: ObservableObject {
         } else {
             correctGuess = nil
             if let index = kanjis.firstIndex(where: { $0.isGuessed == false }) {
-                currentKanjiIndex = index
+                updateKanjiIndex(newIndex: index)
             } else {
                 allKanjiGuessed = true
                 self.appState?.showPoints = true
@@ -55,6 +55,7 @@ class LessonViewModel: ObservableObject {
             case .success(let lesson):
                 DispatchQueue.main.async {
                     self.kanjis = lesson.kanjis
+                    self.appState?.kanjiIndex = 0
                     self.appState?.totalKanji = lesson.kanjis.count
                 }
             case .failure(let error):

@@ -25,7 +25,7 @@ struct HeaderView: View {
                     .foregroundColor(.blue)
                     .fontWeight(.bold)
                     .padding(.trailing, -5)
-                Text("\(state.kanjiIndex ?? 0)/\(state.totalKanji ?? 0)")
+                Text("\((state.kanjiIndex ?? 0) + 1)/\(state.totalKanji ?? 0)")
                     .padding(.trailing, 10)
             }
         }.frame(width: .infinity)
@@ -36,7 +36,7 @@ struct HeaderView: View {
     let appState = AppState()
     appState.userId = 1
     appState.showPoints = false
-    appState.kanjiIndex = 5
+    appState.kanjiIndex = 4
     appState.totalKanji = 5
     return HeaderView()
         .environmentObject(appState)

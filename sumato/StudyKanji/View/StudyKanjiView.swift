@@ -47,6 +47,7 @@ struct StudyKanjiView: View {
                 Spacer()
             }
             .onAppear {
+                appState.showPoints = true
                 kanjiStats.fetchData(forUserId: appState.userId)
             }
             .padding()
@@ -55,6 +56,7 @@ struct StudyKanjiView: View {
                     KanjiPracticeView(isReview: true)
                         .navigationBarBackButtonHidden(true)
                         .toolbar(.hidden, for: .tabBar)
+                        .environmentObject(appState)
                 } else if (selection.viewName == "kanjiLesson") {
                     KanjiLessonView()
                         .navigationBarBackButtonHidden(true)
@@ -67,6 +69,7 @@ struct StudyKanjiView: View {
                     KanjiPracticeView(isReview: false)
                         .navigationBarBackButtonHidden(true)
                         .toolbar(.hidden, for: .tabBar)
+                        .environmentObject(appState)
                 }
             }
         }
