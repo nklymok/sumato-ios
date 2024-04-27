@@ -35,7 +35,7 @@ struct MainView: View {
                     .tabItem {
                         Label("Tanaka-さん", systemImage: "2.circle")
                     }
-                    Text("Profile")
+                    UserProfileView()
                         .tabItem {
                             Label("Profile", systemImage: "3.circle")
                         }
@@ -50,5 +50,5 @@ struct MainView: View {
 }
 
 #Preview {
-    return MainView(user: User(id: "1", appUserId: 1, nickname: "name", name: "name", picture: "pic", updatedAt: "updAt"))
+    return MainView(user: User(id: "8", appUserId: 8, nickname: "name", name: "name", picture: "pic", updatedAt: "updAt"))
 }
