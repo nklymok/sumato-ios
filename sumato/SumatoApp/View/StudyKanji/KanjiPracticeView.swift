@@ -14,6 +14,15 @@ struct KanjiPracticeView: View {
     
     var isReview: Bool; // review or study
     
+    func handleSubmit() {
+        if (lesson.correctGuess == nil) {
+            lesson.checkAnswer(forUserId: appState.userId)
+        } else {
+            lesson.correctGuess = nil
+            lesson.goToNext()
+        }
+    }
+    
     var body: some View {
         VStack {
             if lesson.allKanjiGuessed == true {
@@ -45,14 +54,12 @@ struct KanjiPracticeView: View {
                                 .underline()
                                 .baselineOffset(10)
                                 .padding(.bottom, 20)
+                                .onSubmit {
+                                    handleSubmit()
+                                }
                         } else { }
                         Button("Submit") {
-                            if (lesson.correctGuess == nil) {
-                                lesson.checkAnswer(forUserId: appState.userId)
-                            } else {
-                                lesson.correctGuess = nil
-                                lesson.goToNext()
-                            }
+                            handleSubmit()
                         }
                         .padding()
                         .padding(.trailing, 25)

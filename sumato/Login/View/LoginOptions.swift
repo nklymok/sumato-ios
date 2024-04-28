@@ -29,23 +29,29 @@ struct LoginOptions: View {
 
 extension LoginOptions {
     func login() {
+        let credentialsManager = CredentialsManager(authentication: Auth0.authentication())
+        
         Auth0
             .webAuth()
-            // .useHTTPS() // Use a Universal Link callback URL on iOS 17.4+ / macOS 14.4+
+            .audience("https://sumato.ai/api")
+            .scope("openid profile email read:events")
             .start { result in
                 switch result {
                 case .success(let credentials):
+                    let didStore = credentialsManager.store(credentials: credentials)
+                    print("Credentials: \(credentials)")
+                    print("ID token: \(credentials.idToken)")
+                    print("Access token: \(credentials.accessToken)")
                     self.user = User(from: credentials.idToken)
                 case .failure(let error):
                     print("Failed with: \(error)")
                 }
             }
     }
-
+    
     func logout() {
         Auth0
             .webAuth()
-            // .useHTTPS() // Use a Universal Link logout URL on iOS 17.4+ / macOS 14.4+
             .clearSession { result in
                 switch result {
                 case .success:

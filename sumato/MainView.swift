@@ -50,5 +50,5 @@ struct MainView: View {
 }
 
 #Preview {
-    return MainView(user: User(id: "8", appUserId: 8, nickname: "name", name: "name", picture: "pic", updatedAt: "updAt"))
+    return MainView(user: User(id: "11", appUserId: 11, nickname: "name", name: "name", picture: "pic", updatedAt: "updAt"))
 }
