@@ -10,7 +10,6 @@ import Foundation
 class APIClient {
     static let shared = APIClient()
     private let coreApiClient = CoreAPIClient.shared
-    private let baseURL = "http://localhost:8080/api/"
     
     func fetchStats(forUserId userId: Int, completion: @escaping (Result<StatsResponse, Error>) -> Void) {
         let urlSuffix = "kanji/\(userId)/stats"
@@ -55,6 +54,24 @@ class APIClient {
         let requestBody: [String: Any] = [
             "reviewId": reviewId,
             "answer": userAnswer
+        ]
+        Task {
+            await coreApiClient.makeRequest(urlSuffix: urlSuffix, method: "POST", requestBody: requestBody, completion: completion)
+        }
+    }
+    
+    func fetchChatMessages(completion: @escaping (Result<[Message], Error>) -> Void) {
+        let urlSuffix = "ai-chat/history"
+        Task {
+            await coreApiClient.makeRequest(urlSuffix: urlSuffix, method: "GET", completion: completion)
+        }
+    }
+    
+    func sendMessage(message: Message, completion: @escaping (Result<Message, Error>) -> Void) {
+        let urlSuffix = "ai-chat"
+        let requestBody: [String: Any] = [
+            "text": message.text,
+            "role": message.role
         ]
         Task {
             await coreApiClient.makeRequest(urlSuffix: urlSuffix, method: "POST", requestBody: requestBody, completion: completion)

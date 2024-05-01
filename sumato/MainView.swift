@@ -28,10 +28,7 @@ struct MainView: View {
                         .tabItem {
                             Label("Kanji", systemImage: "1.circle")
                         }
-                    VStack {
-                        Text("Tanaka-さん")
-                        
-                    }
+                    AiChatView()
                     .tabItem {
                         Label("Tanaka-さん", systemImage: "2.circle")
                     }
@@ -42,6 +39,7 @@ struct MainView: View {
                 }
                 
             }.onAppear {
+                appState.userId = user?.appUserId
                 appState.userId = user?.appUserId
             }
             .environmentObject(appState)

@@ -9,7 +9,7 @@ import Foundation
 import Auth0
 
 class CoreAPIClient {
-    private let baseURL = "http://localhost:8080/api/student/"
+    private let baseURL = "http://172.20.10.11:8080/api/student/"
     static let shared = CoreAPIClient()
     
     func makeRequest<T: Decodable>(urlSuffix: String, method: String, requestBody: [String: Any]? = nil, completion: @escaping (Result<T, Error>) -> Void) async {
