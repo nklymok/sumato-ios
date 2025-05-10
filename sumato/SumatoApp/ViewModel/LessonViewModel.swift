@@ -5,6 +5,7 @@
 //  Created by Nazarii Klymok on 21.04.2024.
 //
 
+import ConfettiSwiftUI
 import SwiftUI
 
 class LessonViewModel: ObservableObject {
@@ -14,6 +15,7 @@ class LessonViewModel: ObservableObject {
     @Published var correctGuess: Bool? = nil
     @Published var isPractice = false
     @Published var allKanjiGuessed = false
+    @Published var confettiTrigger: Int = 0
     var appState: AppState?
     
     func goBack() {
@@ -77,6 +79,7 @@ class LessonViewModel: ObservableObject {
                     self.userGuess = ""
                     if (response.isCorrect) {
                         self.kanjis[self.currentKanjiIndex].isGuessed = true
+                        self.confettiTrigger += 1
                         self.goToNext()
                     } else {
                         self.correctGuess = false

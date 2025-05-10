@@ -4,12 +4,13 @@
 //
 //  Created by Nazarii Klymok on 21.04.2024.
 //
-
+import ConfettiSwiftUI
 import SwiftUI
 
 struct KanjiFinishView: View {
     @Environment(\.presentationMode) var presentationMode: Binding<PresentationMode>
     @EnvironmentObject var appState: AppState
+    @State var confettiTrigger: Int = 0
     var kanjis: [Kanji]
     
     var body: some View {
@@ -53,6 +54,14 @@ struct KanjiFinishView: View {
             .cornerRadius(13)
             .fontWeight(.semibold)
         }
+        .onAppear {
+            confettiTrigger += 1
+        }
+        .confettiCannon(
+            trigger: $confettiTrigger,
+            repetitions: 3,
+            repetitionInterval: 0.5
+        )
     }
 }
 

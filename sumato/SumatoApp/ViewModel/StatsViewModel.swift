@@ -12,6 +12,8 @@ class StatsViewModel: ObservableObject {
     @Published var kanjiLearned: Int = 0
     @Published var kanjiLeftToReview: Int = 0
     @Published var kanjiLeftToStudy: Int = 0
+    @Published var nextReviewAt: Date?
+    @Published var nextStudyAt: Date?
     
     func fetchData(forUserId userId: Int?) {
         guard let userId = userId else {
@@ -26,6 +28,8 @@ class StatsViewModel: ObservableObject {
                     self.kanjiLearned = stats.kanjiLearned
                     self.kanjiLeftToReview = stats.kanjiLeftToReview
                     self.kanjiLeftToStudy = stats.kanjiLeftToStudy
+                    self.nextReviewAt = stats.nextReviewAt
+                    self.nextStudyAt = stats.nextStudyAt
                     self.dataFetched = true
                 }
             case .failure(let error):

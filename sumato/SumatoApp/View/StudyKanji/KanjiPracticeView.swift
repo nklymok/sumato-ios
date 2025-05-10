@@ -5,6 +5,7 @@
 //  Created by Nazarii Klymok on 21.04.2024.
 //
 
+import ConfettiSwiftUI
 import SwiftUI
 
 struct KanjiPracticeView: View {
@@ -69,6 +70,7 @@ struct KanjiPracticeView: View {
                         .cornerRadius(13)
                         .fontWeight(.semibold)
                     }
+                    .confettiCannon(trigger: $lesson.confettiTrigger)
                     
                     Spacer()
                     

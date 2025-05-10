@@ -9,7 +9,7 @@ import Foundation
 import Auth0
 
 class CoreAPIClient {
-    private let baseURL = "http://172.20.10.11:8080/api/student/"
+    private let baseURL = "http://localhost:8080/api/student/"
     static let shared = CoreAPIClient()
     
     func makeRequest<T: Decodable>(urlSuffix: String, method: String, requestBody: [String: Any]? = nil, completion: @escaping (Result<T, Error>) -> Void) async {
@@ -39,7 +39,16 @@ class CoreAPIClient {
                 }
                 
                 do {
-                    let decodedObject = try JSONDecoder().decode(T.self, from: data)
+                    let decoder = JSONDecoder()
+                    let df = DateFormatter()
+                    df.calendar    = Calendar(identifier: .iso8601)
+                    df.locale      = Locale(identifier: "en_US_POSIX")
+                    df.timeZone    = TimeZone(secondsFromGMT: 0)
+                    df.dateFormat  = "yyyy-MM-dd'T'HH:mm:ss.SSSXXXXX"  // fractional seconds + timezone
+                    decoder.dateDecodingStrategy = .formatted(df)
+
+                    let decodedObject = try decoder.decode(T.self, from: data)
+                    print("Decoded object", decodedObject)
                     completion(.success(decodedObject))
                 } catch {
                     completion(.failure(error))

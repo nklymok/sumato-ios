@@ -28,6 +28,7 @@ struct StudyKanjiView: View {
                 HStack(spacing: 30) {
                     KanjiButton(
                         howManyLeft: kanjiStats.kanjiLeftToReview,
+                        nextAvailableAt: kanjiStats.nextReviewAt,
                         iconText: "復習",
                         subIconText: "Review",
                         outerTextColor: .green,
@@ -36,6 +37,7 @@ struct StudyKanjiView: View {
                     )
                     KanjiButton(
                         howManyLeft: kanjiStats.kanjiLeftToStudy,
+                        nextAvailableAt: kanjiStats.nextStudyAt,
                         iconText: "学",
                         subIconText: "Study",
                         outerTextColor: .blue,
@@ -91,12 +93,27 @@ struct StudyKanjiView: View {
 
 struct KanjiButton: View {
     let howManyLeft: Int
+    let nextAvailableAt: Date?
     let iconText: String
     let subIconText: String
     let outerTextColor: Color
     let innerTextColor: Color
     let destination: String
     @EnvironmentObject var appState: AppState
+    
+    private var countdownText: String {
+        guard howManyLeft == 0, let next = nextAvailableAt else {
+          return "\(howManyLeft) left"
+        }
+        let interval = next.timeIntervalSinceNow
+        if interval <= 0 { return "\(howManyLeft) left" }
+
+        let fmt = DateComponentsFormatter()
+        fmt.allowedUnits = [.day, .hour, .minute]
+        fmt.unitsStyle   = .short     // e.g. “1d 3h 15m”
+        let s = fmt.string(from: interval) ?? "soon"
+        return "next in \(s)"
+      }
     
     var body: some View {
         let disabled = howManyLeft == 0
@@ -116,10 +133,10 @@ struct KanjiButton: View {
             .buttonStyle(.bordered)
             .disabled(disabled)
             .opacity(disabled ? 0.5 : 1.0)
-            Text("\(howManyLeft) left")
-                .foregroundColor(outerTextColor)
-                .fontWeight(.semibold)
-                .padding(.top, 15)
+            Text(countdownText)
+                    .foregroundColor(outerTextColor)
+                    .fontWeight(.semibold)
+                    .padding(.top, 15)
         }
     }
 }

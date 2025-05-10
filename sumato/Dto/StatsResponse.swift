@@ -11,4 +11,6 @@ struct StatsResponse: Decodable {
     let kanjiLearned: Int
     let kanjiLeftToReview: Int
     let kanjiLeftToStudy: Int
+    let nextReviewAt: Date?
+    let nextStudyAt: Date?
 }

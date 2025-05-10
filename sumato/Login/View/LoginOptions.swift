@@ -42,7 +42,10 @@ extension LoginOptions {
                     print("Credentials: \(credentials)")
                     print("ID token: \(credentials.idToken)")
                     print("Access token: \(credentials.accessToken)")
-                    self.user = User(from: credentials.idToken)
+                    DispatchQueue.main.async {
+                        self.user = User(from: credentials.idToken)
+                        print("user:", self.user as Any)
+                    }
                 case .failure(let error):
                     print("Failed with: \(error)")
                 }

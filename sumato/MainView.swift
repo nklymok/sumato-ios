@@ -18,7 +18,6 @@ struct MainView: View {
         if user == nil {
             LoginScreen(user: $user)
         } else {
-            
             VStack {
                 HeaderView()
                     .environmentObject(appState)
