@@ -69,3 +69,4 @@ fastlane/test_output
 
 sumato/Auth0.plist
 sumato.xcodeproj*
+.DS_Store

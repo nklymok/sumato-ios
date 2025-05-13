@@ -35,6 +35,10 @@ struct MainView: View {
                         .tabItem {
                             Label("Profile", systemImage: "3.circle")
                         }
+                    RealtimeChatView()
+                    .tabItem {
+                        Label("Realtime", systemImage: "4.circle")
+                    }
                 }
                 
             }.onAppear {

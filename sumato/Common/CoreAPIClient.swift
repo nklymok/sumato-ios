@@ -9,7 +9,7 @@ import Foundation
 import Auth0
 
 class CoreAPIClient {
-    private let baseURL = "http://localhost:8080/api/student/"
+    private let baseURL = "https://22f4-188-163-116-103.ngrok-free.app/api/student/"
     static let shared = CoreAPIClient()
     
     func makeRequest<T: Decodable>(urlSuffix: String, method: String, requestBody: [String: Any]? = nil, completion: @escaping (Result<T, Error>) -> Void) async {
@@ -40,12 +40,33 @@ class CoreAPIClient {
                 
                 do {
                     let decoder = JSONDecoder()
-                    let df = DateFormatter()
-                    df.calendar    = Calendar(identifier: .iso8601)
-                    df.locale      = Locale(identifier: "en_US_POSIX")
-                    df.timeZone    = TimeZone(secondsFromGMT: 0)
-                    df.dateFormat  = "yyyy-MM-dd'T'HH:mm:ss.SSSXXXXX"  // fractional seconds + timezone
-                    decoder.dateDecodingStrategy = .formatted(df)
+                    decoder.dateDecodingStrategy = .custom { decoder -> Date in
+                        let container = try decoder.singleValueContainer()
+                        let dateString = try container.decode(String.self)
+
+                        let formats = [
+                            "yyyy-MM-dd'T'HH:mm:ss.SSSXXXXX", // with milliseconds
+                            "yyyy-MM-dd'T'HH:mm:ssXXXXX"      // without milliseconds
+                        ]
+                        
+                        for format in formats {
+                            let formatter = DateFormatter()
+                            formatter.calendar = Calendar(identifier: .iso8601)
+                            formatter.locale = Locale(identifier: "en_US_POSIX")
+                            formatter.timeZone = TimeZone(secondsFromGMT: 0)
+                            formatter.dateFormat = format
+                            
+                            if let date = formatter.date(from: dateString) {
+                                return date
+                            }
+                        }
+
+                        throw DecodingError.dataCorruptedError(
+                            in: container,
+                            debugDescription: "Invalid date format: \(dateString)"
+                        )
+                    }
+
 
                     let decodedObject = try decoder.decode(T.self, from: data)
                     print("Decoded object", decodedObject)
