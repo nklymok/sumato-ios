@@ -19,6 +19,6 @@ struct KanjiWrongView: View {
 }
 
 #Preview {
-    let kanji = Kanji(reviewId: 1, value: "一", onyomi: "イチ・イツ", kunyomi: "ひと-・ひと.つ", meaning: "one", koohiiStory: "One down, 2041 to go. ;)", grade: "1", frequency: 2, isGuessed: false)
+    let kanji = Kanji(reviewId: 1, value: "一", onyomi: "イチ・イツ", kunyomi: "ひと-・ひと.つ", meaning: "one", koohiiStory: "One down, 2041 to go. ;)", grade: "1", isGuessed: false)
     return KanjiWrongView(kanji: kanji)
 }

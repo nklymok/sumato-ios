@@ -14,7 +14,6 @@ struct Kanji: Decodable, Hashable {
     let kunyomi: String
     let meaning: String
     let koohiiStory: String
-    let grade: String
-    let frequency: Int
+    let grade: String?
     var isGuessed: Bool
 }

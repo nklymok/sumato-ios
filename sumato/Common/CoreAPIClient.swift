@@ -9,7 +9,7 @@ import Foundation
 import Auth0
 
 class CoreAPIClient {
-    private let baseURL = "https://22f4-188-163-116-103.ngrok-free.app/api/student/"
+    private let baseURL = "https://50bc-109-237-84-46.ngrok-free.app/api/student/"
     static let shared = CoreAPIClient()
     
     func makeRequest<T: Decodable>(urlSuffix: String, method: String, requestBody: [String: Any]? = nil, completion: @escaping (Result<T, Error>) -> Void) async {

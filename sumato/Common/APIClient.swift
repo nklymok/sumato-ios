@@ -16,7 +16,7 @@ class APIClient {
         Task {
             await coreApiClient.makeRequest(urlSuffix: urlSuffix, method: "GET", completion: completion)
         }
-    }
+    }   
     
     func fetchProfile(forUserId userId: Int, completion: @escaping (Result<UserProfile, Error>) -> Void) {
         let urlSuffix = "profile/\(userId)"
@@ -75,6 +75,18 @@ class APIClient {
         ]
         Task {
             await coreApiClient.makeRequest(urlSuffix: urlSuffix, method: "POST", requestBody: requestBody, completion: completion)
+        }
+    }
+    /// Fetch global stats for all users between two dates.
+    func fetchGlobalStats(from fromDate: Date, to toDate: Date, completion: @escaping (Result<[GlobalStat], Error>) -> Void) {
+        // Format dates as YYYY-MM-DD
+        let formatter = DateFormatter()
+        formatter.dateFormat = "yyyy-MM-dd"
+        let fromString = formatter.string(from: fromDate)
+        let toString = formatter.string(from: toDate)
+        let urlSuffix = "global-stats?from=\(fromString)&to=\(toString)"
+        Task {
+            await coreApiClient.makeRequest(urlSuffix: urlSuffix, method: "GET", completion: completion)
         }
     }
     

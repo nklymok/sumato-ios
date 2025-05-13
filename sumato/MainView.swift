@@ -36,9 +36,13 @@ struct MainView: View {
                             Label("Profile", systemImage: "3.circle")
                         }
                     RealtimeChatView()
-                    .tabItem {
-                        Label("Realtime", systemImage: "4.circle")
-                    }
+                        .tabItem {
+                            Label("Realtime", systemImage: "4.circle")
+                        }
+                    LeaderboardView()
+                        .tabItem {
+                            Label("Leaderboard", systemImage: "5.circle")
+                        }
                 }
                 
             }.onAppear {
@@ -51,5 +55,5 @@ struct MainView: View {
 }
 
 #Preview {
-    return MainView(user: User(id: "11", appUserId: 11, nickname: "name", name: "name", picture: "pic", updatedAt: "updAt"))
+    return MainView(user: User(id: "3", appUserId: 3, nickname: "name", name: "name", picture: "pic", updatedAt: "updAt"))
 }
