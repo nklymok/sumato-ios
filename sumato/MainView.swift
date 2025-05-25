@@ -7,12 +7,15 @@
 
 import SwiftUI
 
-import SwiftUI
-
 struct MainView: View {
     @State var user: User?
     @State private var showDango = true
     @StateObject var appState = AppState()
+
+    /// Allow injecting a user during UI testing to bypass login.
+    init(user: User? = nil) {
+        _user = State(initialValue: user)
+    }
     
     var body: some View {
         if user == nil {

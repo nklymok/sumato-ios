@@ -1,0 +1,29 @@
+{
+  "configurations" : [
+    {
+      "id" : "BB1685EA-C244-4CD4-B739-E481436436D5",
+      "name" : "Test Scheme Action",
+      "options" : {
+
+      }
+    }
+  ],
+  "defaultOptions" : {
+    "targetForVariableExpansion" : {
+      "containerPath" : "container:sumato.xcodeproj",
+      "identifier" : "A56D78F32BD2BD560084FA12",
+      "name" : "sumato"
+    }
+  },
+  "testTargets" : [
+    {
+      "parallelizable" : true,
+      "target" : {
+        "containerPath" : "container:sumato.xcodeproj",
+        "identifier" : "A57F6DA42DE20F1E003A3C41",
+        "name" : "sumatoUITests"
+      }
+    }
+  ],
+  "version" : 1
+}

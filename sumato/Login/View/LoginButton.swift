@@ -26,6 +26,7 @@ struct LoginButton: View {
         .padding(.leading, 30)
         .buttonStyle(.bordered)
         .foregroundColor(.black)
+        .accessibilityIdentifier("\(provider.lowercased())_login_button")
     }
 }
 
