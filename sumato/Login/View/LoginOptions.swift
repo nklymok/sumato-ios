@@ -34,7 +34,7 @@ extension LoginOptions {
         Auth0
             .webAuth()
             .audience("https://sumato.ai/api")
-            .scope("openid profile email read:events")
+            .scope("openid profile email read:events offline_access")
             .start { result in
                 switch result {
                 case .success(let credentials):

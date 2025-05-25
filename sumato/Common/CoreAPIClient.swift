@@ -13,72 +13,85 @@ class CoreAPIClient {
     static let shared = CoreAPIClient()
     
     func makeRequest<T: Decodable>(urlSuffix: String, method: String, requestBody: [String: Any]? = nil, completion: @escaping (Result<T, Error>) -> Void) async {
-        do {
-            guard let url = URL(string: baseURL + urlSuffix) else {
-                completion(.failure(NetworkError.invalidURL))
-                return
-            }
-            
-            var request = URLRequest(url: url)
-            request.httpMethod = method
-            request.setValue("application/json", forHTTPHeaderField: "Content-Type")
-            
-            let credentials = try await credentials();
-            request.setValue("Bearer \(credentials.accessToken)", forHTTPHeaderField: "Authorization")
-            
-            if let requestBody = requestBody {
-                
-                let jsonData = try JSONSerialization.data(withJSONObject: requestBody, options: [])
-                request.httpBody = jsonData
-            }
-            
-            URLSession.shared.dataTask(with: request) { data, response, error in
-                guard let data = data, error == nil else {
-                    completion(.failure(error ?? NetworkError.unknownError))
-                    return
-                }
-                
-                do {
-                    let decoder = JSONDecoder()
-                    decoder.dateDecodingStrategy = .custom { decoder -> Date in
-                        let container = try decoder.singleValueContainer()
-                        let dateString = try container.decode(String.self)
-
-                        let formats = [
-                            "yyyy-MM-dd'T'HH:mm:ss.SSSXXXXX", // with milliseconds
-                            "yyyy-MM-dd'T'HH:mm:ssXXXXX"      // without milliseconds
-                        ]
-                        
-                        for format in formats {
-                            let formatter = DateFormatter()
-                            formatter.calendar = Calendar(identifier: .iso8601)
-                            formatter.locale = Locale(identifier: "en_US_POSIX")
-                            formatter.timeZone = TimeZone(secondsFromGMT: 0)
-                            formatter.dateFormat = format
-                            
-                            if let date = formatter.date(from: dateString) {
-                                return date
-                            }
-                        }
-
-                        throw DecodingError.dataCorruptedError(
-                            in: container,
-                            debugDescription: "Invalid date format: \(dateString)"
-                        )
-                    }
-
-
-                    let decodedObject = try decoder.decode(T.self, from: data)
-                    print("Decoded object", decodedObject)
-                    completion(.success(decodedObject))
-                } catch {
-                    completion(.failure(error))
-                }
-            }.resume()
-        } catch {
-            completion(.failure(error))
+        guard let url = URL(string: baseURL + urlSuffix) else {
+            completion(.failure(NetworkError.invalidURL))
             return
         }
+        var request = URLRequest(url: url)
+        request.httpMethod = method
+        request.setValue("application/json", forHTTPHeaderField: "Content-Type")
+
+
+        let credentialsManager = CredentialsManager(authentication: Auth0.authentication())
+        let accessToken: String
+        do {
+            let credentials = try await credentials()
+            accessToken = credentials.accessToken
+        } catch {
+            credentialsManager.clear()
+            NotificationCenter.default.post(name: .authenticationRequired, object: nil)
+            completion(.failure(NetworkError.unauthorized))
+            return
+        }
+        request.setValue("Bearer \(accessToken)", forHTTPHeaderField: "Authorization")
+
+        if let requestBody = requestBody {
+            do {
+                let jsonData = try JSONSerialization.data(withJSONObject: requestBody, options: [])
+                request.httpBody = jsonData
+            } catch {
+                completion(.failure(error))
+                return
+            }
+        }
+
+        URLSession.shared.dataTask(with: request) { data, response, error in
+            if let httpResponse = response as? HTTPURLResponse, httpResponse.statusCode == 401 {
+                credentialsManager.clear()
+                NotificationCenter.default.post(name: .authenticationRequired, object: nil)
+                completion(.failure(NetworkError.unauthorized))
+                return
+            }
+            guard let data = data, error == nil else {
+                completion(.failure(error ?? NetworkError.unknownError))
+                return
+            }
+
+            do {
+                let decoder = JSONDecoder()
+                decoder.dateDecodingStrategy = .custom { decoder -> Date in
+                    let container = try decoder.singleValueContainer()
+                    let dateString = try container.decode(String.self)
+
+                    let formats = [
+                        "yyyy-MM-dd'T'HH:mm:ss.SSSXXXXX", // with milliseconds
+                        "yyyy-MM-dd'T'HH:mm:ssXXXXX"      // without milliseconds
+                    ]
+
+                    for format in formats {
+                        let formatter = DateFormatter()
+                        formatter.calendar = Calendar(identifier: .iso8601)
+                        formatter.locale = Locale(identifier: "en_US_POSIX")
+                        formatter.timeZone = TimeZone(secondsFromGMT: 0)
+                        formatter.dateFormat = format
+
+                        if let date = formatter.date(from: dateString) {
+                            return date
+                        }
+                    }
+
+                    throw DecodingError.dataCorruptedError(
+                        in: container,
+                        debugDescription: "Invalid date format: \(dateString)"
+                    )
+                }
+
+                let decodedObject = try decoder.decode(T.self, from: data)
+                completion(.success(decodedObject))
+            } catch {
+                completion(.failure(error))
+            }
+        }.resume()
     }
     
     private func credentials() async throws -> Credentials {
@@ -100,4 +113,8 @@ class CoreAPIClient {
     }
     
     
+}
+
+extension Notification.Name {
+    static let authenticationRequired = Notification.Name("authenticationRequired")
 }

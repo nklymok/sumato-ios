@@ -10,12 +10,12 @@ import SwiftUI
 @main
 struct sumatoApp: App {
     /// During UI tests, inject a stub user to skip Auth0 login flow.
-    @State private var stubUser: User? = {
+    private var stubUser: User? {
         if ProcessInfo.processInfo.arguments.contains("-ui-testing") {
             return User(id: "0", appUserId: 1, nickname: "UITest", name: "UI Tester", picture: "", updatedAt: "")
         }
         return nil
-    }()
+    }
 
     var body: some Scene {
         WindowGroup {

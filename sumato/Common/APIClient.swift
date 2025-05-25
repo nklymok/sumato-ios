@@ -95,4 +95,5 @@ class APIClient {
 enum NetworkError: Error {
     case invalidURL
     case unknownError
+    case unauthorized
 }

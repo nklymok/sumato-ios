@@ -6,6 +6,7 @@
 //
 
 import SwiftUI
+import Auth0
 
 struct MainView: View {
     @State var user: User?
@@ -17,9 +18,26 @@ struct MainView: View {
         _user = State(initialValue: user)
     }
     
+    private func attemptAutoLogin() {
+        let credentialsManager = CredentialsManager(authentication: Auth0.authentication())
+        credentialsManager.credentials { result in
+            switch result {
+            case .success(let credentials):
+                if let currentUser = User(from: credentials.idToken) {
+                    DispatchQueue.main.async {
+                        self.user = currentUser
+                    }
+                }
+            case .failure:
+                break
+            }
+        }
+    }
+    
     var body: some View {
         if user == nil {
             LoginScreen(user: $user)
+                .onAppear(perform: attemptAutoLogin)
         } else {
             VStack {
                 HeaderView()
@@ -48,7 +66,11 @@ struct MainView: View {
                         }
                 }
                 
-            }.onAppear {
+            }
+            .onReceive(NotificationCenter.default.publisher(for: .authenticationRequired)) { _ in
+                self.user = nil
+            }
+            .onAppear {
                 appState.userId = user?.appUserId
                 appState.userId = user?.appUserId
             }
