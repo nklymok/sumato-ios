@@ -8,7 +8,7 @@ struct ConversationView: View {
     let aiRole: String
     let situationDescription: String
     let onStop: (Conversation) -> Void
-    @State private var conversation = Conversation(authToken: "")
+    @State private var conversation = Conversation(authToken: "sk-proj-123")
 
     private var prompt: String {
         """

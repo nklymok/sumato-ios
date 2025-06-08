@@ -68,7 +68,9 @@ struct MainView: View {
                 
             }
             .onReceive(NotificationCenter.default.publisher(for: .authenticationRequired)) { _ in
-                self.user = nil
+                if !ProcessInfo.processInfo.arguments.contains("-ui-testing") {
+                    self.user = nil
+                }
             }
             .onAppear {
                 appState.userId = user?.appUserId
